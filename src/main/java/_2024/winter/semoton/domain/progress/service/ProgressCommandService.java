@@ -1,0 +1,104 @@
+package _2024.winter.semoton.domain.progress.service;
+
+import _2024.winter.semoton.common.apiPayload.failure.customException.LandmarkException;
+import _2024.winter.semoton.common.apiPayload.failure.customException.UserException;
+import _2024.winter.semoton.domain.landmark.repository.LandmarkRepository;
+import _2024.winter.semoton.domain.progress.dto.response.QuestSubmitResponse;
+import _2024.winter.semoton.domain.landmark.entity.Landmark;
+import _2024.winter.semoton.domain.progress.entity.Grade;
+import _2024.winter.semoton.domain.progress.entity.Progress;
+import _2024.winter.semoton.domain.progress.repository.ProgressRepository;
+import _2024.winter.semoton.domain.user.entity.User;
+import _2024.winter.semoton.domain.user.jwt.JWTUtil;
+import _2024.winter.semoton.domain.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+@Transactional
+public class ProgressCommandService {
+    private final ProgressRepository progressRepository;
+    private final UserRepository userRepository;
+    private final LandmarkRepository landmarkRepository;
+    private final JWTUtil jwtUtil;
+
+    // DeepAI Pose Estimation API
+    private final String API_URL = "https://api.deepai.org/api/pose-detection";
+    private final String API_KEY = "YOUR_API_KEY"; // API 키 입력
+
+    public QuestSubmitResponse questSubmit(String landmarkName, MultipartFile stdImage, MultipartFile clientImage, HttpServletRequest httpServletRequest){
+        log.info("[ProgressCommandService - questSubmit]");
+
+        // 1. 유저 조회
+        String username = jwtUtil.getUsername(httpServletRequest.getHeader("access"));
+        User user = userRepository.findByUsername(username).orElseThrow(UserException.UsernameNotExistException::new);
+
+        // 2. 랜드마크 조회
+        Landmark landmark = landmarkRepository.findByName(landmarkName).orElseThrow(LandmarkException.LandmarkNotExistException::new);
+
+
+        // 3. api 호출해 점수 받기(수정!!)
+        int getScore = 80;
+        boolean cleared = getScore >= 30;
+
+        if (!progressRepository.existsByUserAndLandmark(user, landmark)){
+            // 4. progress 저장
+            Progress progress = Progress.builder()
+                    .user(user)
+                    .landmark(landmark)
+                    .cleared(cleared)
+                    .score(getScore)
+                    .grade(getGrade(getScore))
+                    .build();
+
+            progressRepository.save(progress);
+
+            // 5. 유저 totalScore 업데이트
+            user.updateTotalScore(getScore);
+
+        }
+        else{
+            Progress progress = progressRepository.findByUserAndLandmark(user, landmark);
+            int prevScore = progress.getScore();
+
+            // 4. progress 업데이트(score, clear, grade)
+            progress.updateProgress(getScore, cleared, getGrade(getScore));
+
+            // 6. 유저 totalScore 업데이트
+            user.updateTotalScore(-prevScore + getScore);
+        }
+
+        //  user allCleared 업데이트
+        if (progressRepository.countByUserAndClearedTrue(user) == landmarkRepository.findAll().size())
+            user.updateAllCleared();
+
+
+        // 획득 점수 반환
+        return QuestSubmitResponse.builder()
+                .score(getScore)
+                .build();
+    }
+
+    private Grade getGrade(int score){
+        return switch (score / 10) {
+            case 10 -> Grade.A_PLUS;
+            case 9 -> Grade.A;
+            case 8 -> Grade.A_MINUS;
+            case 7 -> Grade.B_PLUS;
+            case 6 -> Grade.B;
+            case 5 -> Grade.B_MINUS;
+            case 4 -> Grade.C_PLUS;
+            case 3 -> Grade.C;
+            case 1 -> Grade.C_MINUS;
+            default -> Grade.F;
+        };
+    }
+
+}
