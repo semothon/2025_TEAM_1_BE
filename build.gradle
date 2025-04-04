@@ -46,6 +46,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.session:spring-session-data-redis'
 
+    // web client
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'com.fasterxml.jackson.core:jackson-databind' // JSON 변환
+    implementation 'org.springframework.boot:spring-boot-starter-json' // Jackson 지원
+
 }
 
 tasks.named('test') {

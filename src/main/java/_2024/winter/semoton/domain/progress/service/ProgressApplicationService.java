@@ -15,8 +15,8 @@ public class ProgressApplicationService {
     private final ProgressCommandService progressCommandService;
     private final ProgressQueryService progressQueryService;
 
-    public QuestSubmitResponse questSubmit(String landmarkName, MultipartFile stdImage, MultipartFile clientImage, HttpServletRequest httpServletRequest){
-        return progressCommandService.questSubmit(landmarkName, stdImage, clientImage, httpServletRequest);
+    public QuestSubmitResponse questSubmit(String landmarkName, String stdUrl, String clientUrl, HttpServletRequest httpServletRequest){
+        return progressCommandService.questSubmit(landmarkName, stdUrl, clientUrl, httpServletRequest);
     }
 
     public GetProgressInfoResponse getProgressInfo(Long userId, double latitude, double longitude){

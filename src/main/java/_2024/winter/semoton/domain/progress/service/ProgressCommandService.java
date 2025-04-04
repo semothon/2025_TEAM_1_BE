@@ -11,12 +11,12 @@ import _2024.winter.semoton.domain.progress.repository.ProgressRepository;
 import _2024.winter.semoton.domain.user.entity.User;
 import _2024.winter.semoton.domain.user.jwt.JWTUtil;
 import _2024.winter.semoton.domain.user.repository.UserRepository;
+import _2024.winter.semoton.external.ai.AiService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -28,12 +28,9 @@ public class ProgressCommandService {
     private final UserRepository userRepository;
     private final LandmarkRepository landmarkRepository;
     private final JWTUtil jwtUtil;
+    private final AiService aiService;
 
-    // DeepAI Pose Estimation API
-    private final String API_URL = "https://api.deepai.org/api/pose-detection";
-    private final String API_KEY = "YOUR_API_KEY"; // API 키 입력
-
-    public QuestSubmitResponse questSubmit(String landmarkName, MultipartFile stdImage, MultipartFile clientImage, HttpServletRequest httpServletRequest){
+    public QuestSubmitResponse questSubmit(String landmarkName, String stdUrl, String clientUrl, HttpServletRequest httpServletRequest){
         log.info("[ProgressCommandService - questSubmit]");
 
         // 1. 유저 조회
@@ -43,10 +40,9 @@ public class ProgressCommandService {
         // 2. 랜드마크 조회
         Landmark landmark = landmarkRepository.findByName(landmarkName).orElseThrow(LandmarkException.LandmarkNotExistException::new);
 
-
-        // 3. api 호출해 점수 받기(수정!!)
-        int getScore = 80;
-        boolean cleared = getScore >= 30;
+        // 3. ai 서버로 사진 전송.
+        int getScore = aiService.submitQuestImage(stdUrl, clientUrl);
+        boolean cleared = getScore >= 10;
 
         if (!progressRepository.existsByUserAndLandmark(user, landmark)){
             // 4. progress 저장

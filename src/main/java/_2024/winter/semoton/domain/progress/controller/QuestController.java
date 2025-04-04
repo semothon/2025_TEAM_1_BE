@@ -21,20 +21,13 @@ public class QuestController {
     @PostMapping("/landmarks/{landmarkName}/quest")
     public SuccessApiResponse<QuestSubmitResponse> questSubmit(
             @PathVariable(name = "landmarkName") String landmarkName,
-            @RequestParam(name = "stdImage") MultipartFile stdImage,
-            @RequestParam(name = "clientImage") MultipartFile clientImage,
+            @RequestParam(name = "stdUrl") String stdUrl,
+            @RequestParam(name = "clientUrl") String clientUrl,
             HttpServletRequest httpServletRequest)
     {
         log.info("[QuestController - questSubmit]");
 
-        // 요청의 Content-Type 출력
-        System.out.println("Content-Type: " + httpServletRequest.getContentType());
-
-        if (stdImage == null || clientImage == null) {
-            throw new RuntimeException("파일이 제대로 전달되지 않았습니다.");
-        }
-
-        return SuccessApiResponse.QuestSubmit(progressApplicationService.questSubmit(landmarkName, stdImage, clientImage, httpServletRequest));
+        return SuccessApiResponse.QuestSubmit(progressApplicationService.questSubmit(landmarkName, stdUrl, clientUrl, httpServletRequest));
     }
 
 }
