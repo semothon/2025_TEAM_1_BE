@@ -2,14 +2,13 @@ package _2024.winter.semoton.common.apiPayload.success;
 
 
 import _2024.winter.semoton.common.apiPayload.BaseApiResponse;
+import _2024.winter.semoton.domain.progress.dto.response.GetPresignedUrlResponse;
 import _2024.winter.semoton.domain.progress.dto.response.GetProgressInfoResponse;
 import _2024.winter.semoton.domain.progress.dto.response.GetRankingsResponse;
 import _2024.winter.semoton.domain.progress.dto.response.QuestSubmitResponse;
 import _2024.winter.semoton.domain.user.dto.response.LoginResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
-import java.util.List;
 
 @Getter
 public class SuccessApiResponse <T> extends BaseApiResponse {
@@ -50,6 +49,12 @@ public class SuccessApiResponse <T> extends BaseApiResponse {
     public static SuccessApiResponse<GetRankingsResponse> GetRankings(GetRankingsResponse response){
         return new SuccessApiResponse<>(true, HttpStatus.OK.toString()
                 , "랭킹 조회 성공", response);
+    }
+
+    // [IMAGE]
+    public static SuccessApiResponse<GetPresignedUrlResponse> GetPresignedUrl(GetPresignedUrlResponse response){
+        return new SuccessApiResponse<>(true, HttpStatus.OK.toString()
+                , "업로드용 url 발급 성공", response);
     }
 
 }

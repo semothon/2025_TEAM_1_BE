@@ -51,6 +51,10 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind' // JSON 변환
     implementation 'org.springframework.boot:spring-boot-starter-json' // Jackson 지원
 
+    // aws
+    implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
+    implementation 'io.awspring.cloud:spring-cloud-starter-aws-secrets-manager-config:2.4.4'
+
 }
 
 tasks.named('test') {
