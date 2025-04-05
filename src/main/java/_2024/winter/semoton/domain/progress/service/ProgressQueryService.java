@@ -58,7 +58,7 @@ public class ProgressQueryService {
             landmarkList.add(
                     new LandmarkBriefDto(
                             landmark.getName(),
-                            isWithinDistance(latitude, longitude, landmark.getLatitude(), landmark.getLongitude(), 1000)
+                            isWithinDistance(latitude, longitude, landmark.getLatitude(), landmark.getLongitude(), 300)
                     )
             );
         }
