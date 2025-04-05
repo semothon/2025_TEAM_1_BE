@@ -80,19 +80,12 @@ jobs:
 
       - name: Upload deploy.zip to S3
         run: |
-          mkdir -p deploy/scripts
-
+          mkdir -p deploy
           cp appspec.yml docker-compose.yml deploy/
-          cp -r scripts/* deploy/scripts/
-
-          # 환경 변수 적용된 배포 스크립트 덮어쓰기
-          envsubst < scripts/deploy.sh > deploy/scripts/deploy_temp.sh
-          mv deploy/scripts/deploy_temp.sh deploy/scripts/deploy.sh
-          chmod +x deploy/scripts/deploy.sh
-
-          zip -r deploy.zip deploy/
+          cp -r scripts deploy/
+          envsubst < scripts/deploy.sh > deploy/scripts/deploy.sh
+          command zip -r deploy.zip deploy/ # 'command'를 붙여서 bash 내장 명령 강제 실행
           aws s3 cp deploy.zip s3://${{ secrets.S3_BUCKET_NAME }}/deploy.zip
-
 
       - name: Deploy with CodeDeploy
         run: |
