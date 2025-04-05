@@ -80,12 +80,19 @@ jobs:
 
       - name: Upload deploy.zip to S3
         run: |
-          mkdir -p deploy # 배포 파일을 위한 디렉토리 생성
-          cp appspec.yml docker-compose.yml deploy/ # 배포 관련 파일 복사
-          cp -r scripts deploy/ # 배포 스크립트 복사
-          envsubst < scripts/deploy.sh > deploy/scripts/deploy.sh # 환경변수를 적용한 배포 스크립트 생성
-          zip -r deploy.zip deploy/ # 배포용 ZIP 파일 생성
-          aws s3 cp deploy.zip s3://${{ secrets.S3_BUCKET_NAME }}/deploy.zip # S3에 ZIP 파일 업로드
+          mkdir -p deploy/scripts
+
+          cp appspec.yml docker-compose.yml deploy/
+          cp -r scripts/* deploy/scripts/
+
+          # 환경 변수 적용된 배포 스크립트 덮어쓰기
+          envsubst < scripts/deploy.sh > deploy/scripts/deploy_temp.sh
+          mv deploy/scripts/deploy_temp.sh deploy/scripts/deploy.sh
+          chmod +x deploy/scripts/deploy.sh
+
+          zip -r deploy.zip deploy/
+          aws s3 cp deploy.zip s3://${{ secrets.S3_BUCKET_NAME }}/deploy.zip
+
 
       - name: Deploy with CodeDeploy
         run: |
