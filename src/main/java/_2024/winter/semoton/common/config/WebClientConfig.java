@@ -12,7 +12,7 @@ public class WebClientConfig {
     @Bean
     public WebClient webClient(WebClient.Builder builder) {
         return builder
-                .baseUrl("http://127.0.0.1:5000/happiness") // AI 서버 URL
+                .baseUrl("http://172.21.73.146:5000/compare_images") // AI 서버 URL
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
