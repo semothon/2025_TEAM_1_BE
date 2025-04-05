@@ -16,8 +16,8 @@ public class AiService {
     public int submitQuestImage(String stdUrl, String clientUrl) {
         // JSON 요청 바디 생성
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("stdUrl", stdUrl);
-        requestBody.put("clientUrl", clientUrl);
+        requestBody.put("url1", stdUrl);
+        requestBody.put("url2", clientUrl);
 
         try {
             // POST 요청 및 응답 처리
