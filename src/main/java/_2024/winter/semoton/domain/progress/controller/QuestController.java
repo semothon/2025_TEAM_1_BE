@@ -1,6 +1,7 @@
 package _2024.winter.semoton.domain.progress.controller;
 
 import _2024.winter.semoton.common.apiPayload.success.SuccessApiResponse;
+import _2024.winter.semoton.domain.progress.dto.request.QuestSubmitRequest;
 import _2024.winter.semoton.domain.progress.dto.response.QuestSubmitResponse;
 import _2024.winter.semoton.domain.progress.service.ProgressApplicationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,13 +22,12 @@ public class QuestController {
     @PostMapping("/landmarks/{landmarkName}/quest")
     public SuccessApiResponse<QuestSubmitResponse> questSubmit(
             @PathVariable(name = "landmarkName") String landmarkName,
-            @RequestParam(name = "stdUrl") String stdUrl,
-            @RequestParam(name = "clientUrl") String clientUrl,
+            @RequestBody QuestSubmitRequest request,
             HttpServletRequest httpServletRequest)
     {
         log.info("[QuestController - questSubmit]");
 
-        return SuccessApiResponse.QuestSubmit(progressApplicationService.questSubmit(landmarkName, stdUrl, clientUrl, httpServletRequest));
+        return SuccessApiResponse.QuestSubmit(progressApplicationService.questSubmit(landmarkName, request.getStdUrl(), request.getClientUrl(), httpServletRequest));
     }
 
 }

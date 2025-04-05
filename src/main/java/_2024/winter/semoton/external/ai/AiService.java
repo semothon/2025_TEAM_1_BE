@@ -35,7 +35,8 @@ public class AiService {
                 throw new RuntimeException("AI 서버 응답에 score가 없습니다.");
             }
 
-            return (int) response.get("score");
+            Double score =(Double) response.get("score");
+            return (Integer) score.intValue();
 
         } catch (Exception e) {
             // 네트워크 오류 또는 기타 예외
