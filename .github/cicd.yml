@@ -2,7 +2,7 @@ name: cicd pipeline
 
 on:
   push:
-    branches: ["dev"] # 'dev' 브랜치에 push될 때만 실행
+    branches: ["master"] # 'master' 브랜치에 push될 때만 실행
 
 jobs:
   # ci: # ✅ CI 단계: 코드 빌드 및 테스트 실행
