@@ -8,9 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginResponse {
     private Long userId;
+    private String nickname;
 
     @Builder
-    public LoginResponse(Long userId) {
+    public LoginResponse(Long userId, String nickname) {
         this.userId = userId;
+        this.nickname = nickname;
     }
 }

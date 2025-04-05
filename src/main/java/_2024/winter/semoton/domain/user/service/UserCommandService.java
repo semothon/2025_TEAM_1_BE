@@ -67,6 +67,7 @@ public class UserCommandService {
 
         return LoginResponse.builder()
                 .userId(user.getId())
+                .nickname(user.getNickname())
                 .build();
     }
 

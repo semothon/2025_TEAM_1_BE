@@ -55,6 +55,9 @@ dependencies {
     implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
     implementation 'io.awspring.cloud:spring-cloud-starter-aws-secrets-manager-config:2.4.4'
 
+    // mysql
+    implementation 'com.mysql:mysql-connector-j'
+    runtimeOnly 'com.mysql:mysql-connector-j'
 }
 
 tasks.named('test') {
