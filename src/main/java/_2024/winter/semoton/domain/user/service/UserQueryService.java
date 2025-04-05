@@ -6,7 +6,9 @@ import _2024.winter.semoton.domain.progress.entity.Grade;
 import _2024.winter.semoton.domain.user.dto.RankDto;
 import _2024.winter.semoton.domain.user.dto.request.LoginRequest;
 import _2024.winter.semoton.domain.user.entity.User;
+import _2024.winter.semoton.domain.user.jwt.JWTUtil;
 import _2024.winter.semoton.domain.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,7 @@ import java.util.List;
 public class UserQueryService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JWTUtil jwtUtil;
 
     public Long checkUserInfo(LoginRequest loginRequest){
         log.info("[UserQueryService - login]");
@@ -39,8 +42,12 @@ public class UserQueryService {
         return user.getId();
     }
 
-    public GetRankingsResponse getRankings(){
+    public GetRankingsResponse getRankings(HttpServletRequest httpServletRequest){
         log.info("[UserQueryService - getRankings]");
+
+        String username = jwtUtil.getUsername(httpServletRequest.getHeader("access"));
+        User my = userRepository.findByUsername(username).orElseThrow(UserException.UsernameNotExistException::new);
+
         List<RankDto> rankings = new ArrayList<>();
 
         List<User> allClearedUserList = userRepository.findByAllClearedTrue();
@@ -58,6 +65,8 @@ public class UserQueryService {
         }
 
         return GetRankingsResponse.builder()
+                .myNickName(my.getNickname())
+                .myTotalScore(my.getTotalScore())
                 .rankings(rankings.subList(0, Math.min(10, allClearedUserList.size())))
                 .build();
     }

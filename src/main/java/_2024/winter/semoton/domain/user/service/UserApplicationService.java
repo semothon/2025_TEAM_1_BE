@@ -30,7 +30,7 @@ public class UserApplicationService {
         userCommandService.reissueToken(httpServletRequest, httpServletResponse);
     }
 
-    public GetRankingsResponse getRankings(){
-        return userQueryService.getRankings();
+    public GetRankingsResponse getRankings(HttpServletRequest httpServletRequest){
+        return userQueryService.getRankings(httpServletRequest);
     }
 }

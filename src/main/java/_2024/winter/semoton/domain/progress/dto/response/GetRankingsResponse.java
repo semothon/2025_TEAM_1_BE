@@ -14,6 +14,9 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class GetRankingsResponse {
+    String myNickName;
+    int myTotalScore;
+
     List<RankDto> rankings;
 
 }
